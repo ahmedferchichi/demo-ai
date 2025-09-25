@@ -14,23 +14,28 @@ import {MarkdownComponent} from 'ngx-markdown';
 })
 export class ChatComponent {
   query : string ="";
-  response : any ;
+  response : string = "";
   progress : boolean = false;
   constructor(private http : HttpClient) {
   }
   askAgent() {
     this.response="";
     this.progress=true;
-    this.http.get("http://localhost:8087/askAgent?query="+this.query,
+
+    this.http.get(`http://localhost:8080/api/chat/stream?message=${encodeURIComponent(this.query)}`,
       {responseType:'text', observe : 'events', reportProgress : true})
       .subscribe({
         next:evt => {
           if( evt.type === HttpEventType.DownloadProgress){
-            this.response =  (evt as HttpDownloadProgressEvent).partialText
+            this.response =  (evt as HttpDownloadProgressEvent).partialText || '';
           }
 
         },
-        error : err => {},
+        error : err => {
+          console.error('Error calling backend:', err);
+          this.response = 'Error: Unable to connect to the backend service.';
+          this.progress = false;
+        },
         complete :() => {
           this.progress = false;
         }
