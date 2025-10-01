@@ -1,5 +1,6 @@
 package com.example.demoai.service;
 
+import com.example.demoai.DogA;
 import com.example.demoai.util.MessageCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +16,15 @@ public class ChatService {
     private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
     private final ChatClient chatClient;
     private final MessageCleaner messageCleaner;
+    private final DogA dogA;
 
-    public ChatService(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, MessageCleaner messageCleaner) {
+    public ChatService(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, MessageCleaner messageCleaner, DogA dogA) {
         this.chatClient = chatClientBuilder
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
         this.messageCleaner = messageCleaner;
-        logger.info("🤖 ChatService initialized with Ollama ChatClient and MessageCleaner");
+        this.dogA = dogA;
+        logger.info("🤖 ChatService initialized with Ollama ChatClient, MessageCleaner, and DogA");
     }
 
     public String sendMessage(String message) {
@@ -34,6 +37,7 @@ public class ChatService {
             logger.debug("⏳ Calling Ollama API...");
             String response = chatClient.prompt()
                     .user(message)
+                    .tools(dogA)
                     .call()
                     .content();
 
