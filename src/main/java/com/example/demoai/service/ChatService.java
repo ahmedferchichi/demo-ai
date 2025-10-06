@@ -4,8 +4,7 @@ import com.example.demoai.util.MessageCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -16,9 +15,10 @@ public class ChatService {
     private final ChatClient chatClient;
     private final MessageCleaner messageCleaner;
 
-    public ChatService(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, MessageCleaner messageCleaner) {
+    public ChatService(ChatClient.Builder chatClientBuilder, MessageCleaner messageCleaner, ToolCallbackProvider toolCallbackProvider) {
         this.chatClient = chatClientBuilder
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                // .defaultSystem("You are a helpful assistant. Answer the user question as best as you can.")
+                // .defaultToolCallbacks(toolCallbackProvider)
                 .build();
         this.messageCleaner = messageCleaner;
         logger.info("🤖 ChatService initialized with Ollama ChatClient and MessageCleaner");
