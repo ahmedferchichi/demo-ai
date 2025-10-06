@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -16,12 +19,21 @@ public class ChatService {
     private final ChatClient chatClient;
     private final MessageCleaner messageCleaner;
 
-    public ChatService(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, MessageCleaner messageCleaner) {
+    public ChatService(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, MessageCleaner messageCleaner, ToolCallbackProvider toolCallbackProvider, @Value("${mcp.client}") String model) {
+
+        OllamaOptions options = OllamaOptions.builder()
+                .model(model)
+                .build();
+
         this.chatClient = chatClientBuilder
+                .defaultSystem("You are a helpful assistant. Answer the user question as best as you can.")
+                .defaultOptions(options)
+                .defaultToolCallbacks(toolCallbackProvider)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
         this.messageCleaner = messageCleaner;
         logger.info("🤖 ChatService initialized with Ollama ChatClient and MessageCleaner");
+        logger.info("🤖 ChatService initialized with Ollama model: {}", model);
     }
 
     public String sendMessage(String message) {
