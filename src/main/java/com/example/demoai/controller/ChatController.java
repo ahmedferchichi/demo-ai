@@ -71,6 +71,7 @@ public class ChatController {
     public Flux<String> streamChatPost(@RequestBody ChatRequest request) {
         logger.info("🔥 Received streaming chat POST request: '{}'", request.message());
         logger.debug("📨 Request details - Message length: {} characters", request.message().length());
+        //test
 
         return chatService.streamMessage(request.message())
                 .doOnSubscribe(subscription ->
