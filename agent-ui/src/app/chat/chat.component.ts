@@ -28,8 +28,8 @@ interface SpeechRecognition extends EventTarget {
 
 declare global {
   interface Window {
-    SpeechRecognition: new () => SpeechRecognition;
-    webkitSpeechRecognition: new () => SpeechRecognition;
+    SpeechRecognition?: new () => SpeechRecognition;
+    webkitSpeechRecognition?: new () => SpeechRecognition;
   }
 }
 
@@ -70,7 +70,10 @@ export class ChatComponent implements OnDestroy {
       this.recognition = new SpeechRecognitionAPI();
       this.recognition.continuous = false;
       this.recognition.interimResults = true;
-      this.recognition.lang = 'es-ES'; // Spanish language
+      const browserLang = (navigator.languages && navigator.languages.length > 0
+        ? navigator.languages[0]
+        : navigator.language) || 'en-US';
+      this.recognition.lang = browserLang;
 
       this.recognition.onresult = (event: SpeechRecognitionEvent) => {
         let interimTranscript = '';
@@ -127,6 +130,12 @@ export class ChatComponent implements OnDestroy {
   askAgent(): void {
     if (!this.query.trim()) {
       return;
+    }
+
+    // Stop voice recognition if active to prevent race condition
+    if (this.isListening && this.recognition) {
+      this.recognition.stop();
+      this.isListening = false;
     }
 
     this.response = '';

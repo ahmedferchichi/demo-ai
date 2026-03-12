@@ -11,7 +11,7 @@
                 [class.btn-danger]="isListening"
                 [class.btn-outline-secondary]="!isListening"
                 [title]="isListening ? 'Stop listening' : 'Start voice input'">
-          <span [innerHTML]="isListening ? '&#x1F534; Stop' : '&#x1F3A4; Speak'"></span>
+          <span>{{ isListening ? '🔴 Stop' : '🎤 Speak' }}</span>
         </button>
       }
       <button (click)="askAgent()" style="display: inline" class="btn btn-outline-primary m-2">Send</button>
