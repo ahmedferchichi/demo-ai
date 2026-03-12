@@ -3,17 +3,12 @@ package com.example.demoai.controller;
 import com.example.demoai.dto.ChatRequest;
 import com.example.demoai.dto.ChatResponse;
 import com.example.demoai.service.ChatService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -71,7 +66,6 @@ public class ChatController {
     public Flux<String> streamChatPost(@RequestBody ChatRequest request) {
         logger.info("🔥 Received streaming chat POST request: '{}'", request.message());
         logger.debug("📨 Request details - Message length: {} characters", request.message().length());
-        //test
 
         return chatService.streamMessage(request.message())
                 .doOnSubscribe(subscription ->
