@@ -2,7 +2,18 @@
   <div class="card-body">
     <div class="mb-3">
       <label style="display: block; font-weight:bold " class="form-label m-2">Your question:</label>
-      <input [(ngModel)]="query" style="width: 70%;display: inline" class="form-control m-2">
+      <input [(ngModel)]="query" style="width: 60%;display: inline" class="form-control m-2"
+             placeholder="Type or speak your question...">
+      @if (speechSupported) {
+        <button (click)="toggleSpeechRecognition()"
+                style="display: inline"
+                class="btn m-2"
+                [class.btn-danger]="isListening"
+                [class.btn-outline-secondary]="!isListening"
+                [title]="isListening ? 'Stop listening' : 'Start voice input'">
+          <span [innerHTML]="isListening ? '&#x1F534; Stop' : '&#x1F3A4; Speak'"></span>
+        </button>
+      }
       <button (click)="askAgent()" style="display: inline" class="btn btn-outline-primary m-2">Send</button>
       @if (progress) {
         <div  class="spinner-border text-primary" role="status">
